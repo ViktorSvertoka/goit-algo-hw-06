@@ -1,3 +1,4 @@
+import heapq
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -19,19 +20,38 @@ edges = [
 
 G.add_weighted_edges_from(edges)
 
-# Запуск алгоритму Дейкстри для всіх пар вершин
-shortest_paths = dict(nx.all_pairs_dijkstra_path(G))
-shortest_distances = dict(nx.all_pairs_dijkstra_path_length(G))
 
-# Виведення результатів
-print("Найкоротші шляхи між усіма парами вершин:")
-for source in shortest_paths:
-    for target in shortest_paths[source]:
-        path = shortest_paths[source][target]
-        distance = shortest_distances[source][target]
-        print(f"Від {source} до {target}: шлях {path}, відстань {distance}")
+def dijkstra(graph, start):
+    distances = {node: float("infinity") for node in graph.nodes}
+    distances[start] = 0
+    priority_queue = [(0, start)]
 
-# Візуалізація графа
+    while priority_queue:
+        current_distance, current_node = heapq.heappop(priority_queue)
+
+        if current_distance > distances[current_node]:
+            continue
+
+        for neighbor, attributes in graph[current_node].items():
+            weight = attributes["weight"]
+            distance = current_distance + weight
+
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    return distances
+
+
+all_distances = {node: dijkstra(G, node) for node in G.nodes}
+
+
+print("Найкоротші відстані між усіма парами вершин:")
+for source in all_distances:
+    for target in all_distances[source]:
+        print(f"Від {source} до {target}: відстань {all_distances[source][target]}")
+
+
 pos = nx.circular_layout(G)
 nx.draw(
     G,
@@ -44,7 +64,7 @@ nx.draw(
     font_color="darkgreen",
 )
 
-# Відображення ваг ребер на графі
+
 edge_labels = {(u, v): f'{d["weight"]}' for u, v, d in G.edges(data=True)}
 nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
 
