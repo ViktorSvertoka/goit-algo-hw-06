@@ -1,6 +1,5 @@
 import networkx as nx
 
-# Створюємо граф, як у завданні 1
 G = nx.Graph()
 stations = ["Депо", "Вишенька", "Яблунька", "Центральна", "Березка", "Гайок"]
 edges = [
@@ -16,7 +15,6 @@ G.add_nodes_from(stations)
 G.add_edges_from(edges)
 
 
-# Функція для виконання DFS
 def dfs(graph, start):
     visited = set()
     stack = [start]
@@ -35,7 +33,6 @@ def dfs(graph, start):
     return path
 
 
-# Функція для виконання BFS
 def bfs(graph, start):
     visited = set()
     queue = [start]
@@ -54,7 +51,6 @@ def bfs(graph, start):
     return path
 
 
-# Запуск алгоритмів і друк результатів
 start_node = "Депо"
 dfs_path = dfs(G, start_node)
 bfs_path = bfs(G, start_node)
